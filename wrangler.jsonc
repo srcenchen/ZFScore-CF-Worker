@@ -5,12 +5,12 @@
   "compatibility_date": "2026-06-30",
   "workers_dev": true,
   "triggers": {
-    "crons": ["17,47 * * * *"]
+    "crons": ["0,30 * * * *"]
   },
   "kv_namespaces": [
     {
       "binding": "score_hash",
-      "id": "REPLACE_WITH_YOUR_SCORE_HASH_NAMESPACE_ID"
+      "id": "141330da4b5145b781d223e0809bcafb"
     }
   ]
 }
