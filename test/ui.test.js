@@ -30,3 +30,20 @@ test("report API rejects an unknown user token before querying school", async ()
   assert.equal(response.status, 401);
   assert.match(await response.text(), /Unauthorized/);
 });
+
+test("manual notification requires a configured notification channel", async () => {
+  const response = await worker.fetch(
+    new Request("https://worker.example/notify?token=correct-token"),
+    {
+      USERS_JSON: JSON.stringify([{
+        id: "user1",
+        token: "correct-token",
+        url: "https://school.example/jwglxt/",
+        username: "1001",
+        password: "password",
+      }]),
+    },
+  );
+  assert.equal(response.status, 400);
+  assert.match(await response.text(), /尚未配置/);
+});

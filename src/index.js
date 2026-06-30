@@ -21,7 +21,9 @@ export default {
     if (url.pathname === "/" && request.method === "GET") {
       return htmlResponse(loadingPage());
     }
-    if (url.pathname !== "/api/report") {
+    const isReport = url.pathname === "/api/report";
+    const isNotify = url.pathname === "/notify";
+    if (!isReport && !isNotify) {
       return json({ ok: false, error: "Not Found" }, 404);
     }
     if (request.method !== "GET" && request.method !== "POST") {
@@ -34,6 +36,17 @@ export default {
         || url.searchParams.get("token");
       const user = findUserByToken(users, token);
       if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
+
+      if (isNotify) {
+        if (!hasNotifier(user)) {
+          return json({ ok: false, error: "该用户尚未配置 ShowDoc 或 Telegram 通知" }, 400);
+        }
+        const userEnv = createUserEnv(env, user);
+        userEnv.FORCE_PUSH_MESSAGE = "true";
+        const result = await run(userEnv, { notify: true, commit: true });
+        const { report: _report, ...summary } = result;
+        return json({ userId: user.id, ...summary });
+      }
 
       // HTTP viewing is read-only: no notification and no KV update.
       const result = await run(createUserEnv(env, user), {

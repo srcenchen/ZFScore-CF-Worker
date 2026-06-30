@@ -114,6 +114,24 @@ https://YOUR_WORKER.workers.dev/
 
 页面中输入用户自己的 `token` 即可。也兼容 `/?token=USER_ACCESS_TOKEN` 自动查询；查询参数可能进入访问日志，因此日常使用更推荐页面输入或 Authorization Header。健康检查 `/health` 不含个人数据，无需鉴权。
 
+## 手动强制通知
+
+为某个用户立即执行一次查询并强制推送，不论成绩摘要是否变化：
+
+```text
+https://YOUR_WORKER.workers.dev/notify?token=USER_ACCESS_TOKEN
+```
+
+也可以避免把 Token 放进 URL：
+
+```bash
+curl -X POST \
+  -H "Authorization: Bearer USER_ACCESS_TOKEN" \
+  https://YOUR_WORKER.workers.dev/notify
+```
+
+该接口只执行 Token 对应的用户，并在通知成功后更新其 KV。用户必须配置 ShowDoc 或完整的 Telegram 通知参数，否则返回 400。
+
 ## 连接 GitHub / GitLab
 
 1. 将本仓库推送到 GitHub 或 GitLab，确保 Secrets 没有进入提交。
