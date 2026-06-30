@@ -1,13 +1,16 @@
 import { run } from "./job.js";
+import { htmlResponse, loadingPage } from "./ui.js";
 import { errorMessage, json } from "./utils.js";
+import {
+  createUserEnv,
+  findUserByToken,
+  hasNotifier,
+  loadUsers,
+} from "./users.js";
 
 export default {
   async scheduled(_event, env, ctx) {
-    ctx.waitUntil(
-      run(env, { notify: true, commit: true }).then(({ report: _report, ...summary }) => {
-        console.log(JSON.stringify(summary));
-      }),
-    );
+    ctx.waitUntil(runScheduledUsers(env));
   },
 
   async fetch(request, env) {
@@ -15,24 +18,33 @@ export default {
     if (url.pathname === "/health") {
       return json({ ok: true, service: "ZFCheckScores Worker" });
     }
-
-    if (!env.ADMIN_TOKEN) {
-      return json({ ok: false, error: "请先配置 ADMIN_TOKEN，避免成绩被公开访问" }, 503);
+    if (url.pathname === "/" && request.method === "GET") {
+      return htmlResponse(loadingPage());
     }
-    const supplied = request.headers.get("Authorization")?.replace(/^Bearer\s+/i, "")
-      || url.searchParams.get("token");
-    if (supplied !== env.ADMIN_TOKEN) return json({ ok: false, error: "Unauthorized" }, 401);
-    if (request.method !== "POST" && request.method !== "GET") {
+    if (url.pathname !== "/api/report") {
+      return json({ ok: false, error: "Not Found" }, 404);
+    }
+    if (request.method !== "GET" && request.method !== "POST") {
       return json({ ok: false, error: "Method Not Allowed" }, 405);
     }
 
     try {
+      const users = loadUsers(env);
+      const token = request.headers.get("Authorization")?.replace(/^Bearer\s+/i, "")
+        || url.searchParams.get("token");
+      const user = findUserByToken(users, token);
+      if (!user) return json({ ok: false, error: "Unauthorized" }, 401);
+
       // HTTP viewing is read-only: no notification and no KV update.
-      const result = await run(env, { notify: false, commit: false });
+      const result = await run(createUserEnv(env, user), {
+        notify: false,
+        commit: false,
+      });
       return new Response(result.report, {
         headers: {
           "Content-Type": "text/plain;charset=UTF-8",
           "Cache-Control": "no-store",
+          "X-Content-Type-Options": "nosniff",
         },
       });
     } catch (error) {
@@ -41,3 +53,28 @@ export default {
     }
   },
 };
+
+async function runScheduledUsers(env) {
+  const users = loadUsers(env);
+  const failures = [];
+
+  // Sequential execution avoids sending a burst of logins to the school.
+  for (const user of users) {
+    try {
+      const notifyEnabled = hasNotifier(user);
+      const result = await run(createUserEnv(env, user), {
+        notify: notifyEnabled,
+        commit: true,
+      });
+      const { report: _report, ...summary } = result;
+      console.log(JSON.stringify({ userId: user.id, ...summary }));
+    } catch (error) {
+      failures.push({ userId: user.id, error: errorMessage(error) });
+      console.error(JSON.stringify(failures.at(-1)));
+    }
+  }
+
+  if (failures.length) {
+    throw new Error(`部分用户执行失败：${failures.map((item) => item.userId).join(", ")}`);
+  }
+}

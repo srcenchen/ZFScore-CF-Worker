@@ -1,12 +1,25 @@
-URL="https://jwgl.example.edu.cn/jwglxt/"
-USERNAME="your-student-id"
-PASSWORD="your-password"
-ADMIN_TOKEN="replace-with-a-long-random-value"
+# Recommended multi-user configuration. Keep the JSON on one line in
+# Cloudflare's USERS_JSON Secret. This readable form also works in .dev.vars.
+USERS_JSON='[
+  {
+    "id": "student1",
+    "token": "replace-with-a-long-random-access-token",
+    "url": "https://jwgl.example.edu.cn/jwglxt/",
+    "username": "your-student-id",
+    "password": "your-password",
+    "showdocToken": "",
+    "telegramBotToken": "",
+    "telegramChatId": "",
+    "forcePush": false
+  }
+]'
 
-# Choose ShowDoc, Telegram, or configure both.
-TOKEN=""
-TG_BOT_TOKEN=""
-TG_CHAT_ID=""
-
-# Optional: force scheduled notification every run.
-FORCE_PUSH_MESSAGE="false"
+# Legacy single-user variables remain supported when USERS_JSON is absent:
+# URL="https://jwgl.example.edu.cn/jwglxt/"
+# USERNAME="your-student-id"
+# PASSWORD="your-password"
+# ADMIN_TOKEN="replace-with-a-long-random-value"
+# TOKEN=""
+# TG_BOT_TOKEN=""
+# TG_CHAT_ID=""
+# FORCE_PUSH_MESSAGE="false"

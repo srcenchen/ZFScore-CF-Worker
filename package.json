@@ -1,6 +1,6 @@
 {
   "name": "zfcheckscores-worker",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "ZFSoft score and exam monitor for Cloudflare Workers",
