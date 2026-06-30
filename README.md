@@ -33,6 +33,8 @@ Namespace ID 不是密码，可以提交进 Git；账号、密码和通知 Token
 
 在 Cloudflare Worker 的 `设置 -> 变量和机密` 中添加一个加密 Secret：`USERS_JSON`。值是 JSON 数组，例如：
 
+请添加到 Worker 的运行时“变量和机密”，不要只添加到 `构建 -> 变量和机密`；构建变量不会自动成为 `env.USERS_JSON`。仓库已启用 `keep_vars: true`，Git/Wrangler 后续部署会保留控制台中配置的运行时变量。加密 Secret 本身也会被 Wrangler 保留。
+
 ```json
 [
   {
