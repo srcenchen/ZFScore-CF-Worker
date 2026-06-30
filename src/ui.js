@@ -77,7 +77,6 @@ export function loadingPage() {
     });
     const queryToken = new URLSearchParams(location.search).get('token');
     if (queryToken) {
-      history.replaceState({}, '', location.pathname);
       load(queryToken);
     }
   </script>

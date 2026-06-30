@@ -10,6 +10,7 @@ test("root returns an immediate loading UI", async () => {
   assert.match(html, /class="spinner"/);
   assert.match(html, /\/api\/report/);
   assert.match(html, /访问 Token/);
+  assert.doesNotMatch(html, /history\.replaceState/);
 });
 
 test("report API rejects an unknown user token before querying school", async () => {
