@@ -1,0 +1,20 @@
+{
+  "name": "zfcheckscores-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ZFSoft score and exam monitor for Cloudflare Workers",
+  "scripts": {
+    "check": "node --input-type=module -e \"import { readdir } from 'node:fs/promises'; await Promise.all((await readdir('src')).filter(f => f.endsWith('.js')).map(f => import('./src/' + f)))\"",
+    "test": "node --test",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.68.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Apache-2.0"
+}

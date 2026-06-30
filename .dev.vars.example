@@ -1,0 +1,12 @@
+URL="https://jwgl.example.edu.cn/jwglxt/"
+USERNAME="your-student-id"
+PASSWORD="your-password"
+ADMIN_TOKEN="replace-with-a-long-random-value"
+
+# Choose ShowDoc, Telegram, or configure both.
+TOKEN=""
+TG_BOT_TOKEN=""
+TG_CHAT_ID=""
+
+# Optional: force scheduled notification every run.
+FORCE_PUSH_MESSAGE="false"

@@ -1,0 +1,10 @@
+ZFCheckScores Worker
+Copyright 2026 the modifications' author(s)
+
+This product is derived from ZFCheckScores by NianBroken
+(Copyright © 2024 NianBroken), licensed under the Apache License 2.0.
+
+The original Python/GitHub Actions implementation was substantially changed
+into a modular JavaScript application for Cloudflare Workers. State storage,
+HTTP viewing, notification dispatch, and deployment configuration were adapted
+for the Cloudflare Workers runtime.

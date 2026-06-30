@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "zfcheckscores-worker",
+  "main": "src/index.js",
+  "compatibility_date": "2026-06-30",
+  "workers_dev": true,
+  "triggers": {
+    "crons": ["17,47 * * * *"]
+  },
+  "kv_namespaces": [
+    {
+      "binding": "score_hash",
+      "id": "REPLACE_WITH_YOUR_SCORE_HASH_NAMESPACE_ID"
+    }
+  ]
+}
